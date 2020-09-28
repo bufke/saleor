@@ -10,7 +10,11 @@ from ....product.models import (
     ProductVariant,
     ProductVariantChannelListing,
 )
-from ...tests.utils import assert_filter_without_channel, get_graphql_content
+from ...tests.utils import (
+    assert_filter_without_channel,
+    assert_sort_with_invalid_channel,
+    get_graphql_content,
+)
 
 
 @pytest.fixture
@@ -155,6 +159,29 @@ QUERY_PRODUCTS_WITH_SORTING_AND_FILTERING = """
         }
     }
 """
+
+
+@pytest.mark.parametrize(
+    "sort_by",
+    [
+        {"field": "PUBLISHED", "direction": "ASC"},
+        {"field": "PRICE", "direction": "DESC"},
+        {"field": "MINIMAL_PRICE", "direction": "DESC"},
+    ],
+)
+def test_products_with_sorting_and_not_existing_channel(
+    sort_by, staff_api_client, permission_manage_products,
+):
+
+    sort_by["channel"] = "Not-existing-channel"
+    variables = {"sortBy": sort_by}
+    response = staff_api_client.post_graphql(
+        QUERY_PRODUCTS_WITH_SORTING_AND_FILTERING,
+        variables,
+        permissions=[permission_manage_products],
+        check_no_permissions=False,
+    )
+    assert_sort_with_invalid_channel(response)
 
 
 @pytest.mark.parametrize(
