@@ -181,6 +181,34 @@ class TransactionLine:
     DestinationJurisdiction: str
     DestinationAddress1: Optional[str]
     DestinationAddress2: Optional[str]
+    DestinationCounty: Optional[str]
+    DestinationCity: str
+    DestinationPostalCode: str
+    SaleCountryCode: str
+    SaleAddress1: Optional[str]
+    SaleAddress2: Optional[str]
+    SaleJurisdiction: str
+    SaleCounty: Optional[str]
+    SaleCity: str
+    SalePostalCode: str
+
+    """ WIP """
+    Origin: Optional[str]
+    OriginType: Optional[str]
+    OriginCountryCode: str
+    OriginJurisdiction: str  # state or region
+    OriginCounty: str  # is this really required?
+    OriginCity: str
+    OriginPostalCode: str
+    OriginAddress1: str
+    OriginAddress2: Optional[str]
+
+    # should we even include these?
+    OriginAirportCode: Optional[str]
+    OriginOutCityLimitInd: Optional[str]
+    OriginExciseWarehouse: Optional[str]
+    OriginSpecialJurisdictionInd: Optional[str]
+    OriginSpecialJurisdictions: Optional[List[str]]
 
 
 def get_checkout_lines_data(
@@ -194,12 +222,14 @@ def get_checkout_lines_data(
     ).filter(variant__product__charge_taxes=True)
     tax_included = Site.objects.get_current().settings.include_taxes_in_prices
     channel = checkout.channel
+    shipping_address = checkout.shipping_address
 
     for line in lines:
         channel_listing = line.variant.channel_listings.get(channel=channel)
         stock = line.variant.stocks.for_country(
             checkout.shipping_address.country
         ).first()
+        warehouse = stock.warehouse
         data.append(
             TransactionLine(
                 InvoiceLine=line.id,
@@ -210,10 +240,24 @@ def get_checkout_lines_data(
                 if channel_listing.cost_price
                 else None,
                 TaxIncluded=tax_included,
-                DestinationCountryCode=checkout.shipping_address.country.alpha3,
-                DestinationJurisdiction=checkout.shipping_address.country_area,
-                DestinationAddress1=checkout.shipping_address.street_address_1,
-                DestinationAddress2=checkout.shipping_address.street_address_2,
+                DestinationCountryCode=shipping_address.country.alpha3,
+                DestinationJurisdiction=shipping_address.country_area,
+                DestinationAddress1=shipping_address.street_address_1,
+                DestinationAddress2=shipping_address.street_address_2,
+                DestinationCity=shipping_address.city,
+                DestinationPostalCode=shipping_address.postal_code,
+                SaleCountryCode=shipping_address.country.alpha3,
+                SaleJurisdiction=shipping_address.country_area,
+                SaleAddress1=shipping_address.street_address_1,
+                SaleAddress2=shipping_address.street_address_2,
+                SaleCity=shipping_address.city,
+                SalePostalCode=shipping_address.postal_code,
+                OriginCountryCode=warehouse.country.alpha3,
+                OriginJurisdiction=warehouse.country_area,
+                OriginAddress1=warehouse.street_address_1,
+                OriginAddress2=warehouse.street_address_2,
+                OriginCity=warehouse.city,
+                OriginPostalCode=warehouse.postal_code,
             )
         )
         # name = line.variant.product.name
