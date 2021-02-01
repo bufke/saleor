@@ -1,6 +1,6 @@
+import dataclasses
 import json
 import logging
-import dataclasses
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
@@ -49,11 +49,12 @@ def api_post_request(
 ) -> Dict[str, Any]:
     response = None
     data_dict = dataclasses.asdict(data)
-    print('data dictttt', data_dict)
+    print("data dictttt", data_dict)
     try:
-        auth = HTTPBasicAuth(config.username_or_account, config.password_or_license)
+        auth = HTTPBasicAuth(config.username, config.password)
         response = requests.post(
-            url, auth=auth, data=json.dumps(data_dict), timeout=TIMEOUT)
+            url, auth=auth, data=json.dumps(data_dict), timeout=TIMEOUT
+        )
         logger.debug("Hit to Avatax to calculate taxes %s", url)
         json_response = response.json()
         if "error" in response:  # type: ignore
@@ -113,14 +114,14 @@ def generate_request_data(
 ):
     checkout_id = str(checkout.token)
     data: Dict = {}
-    date = checkout.last_change.strftime('%m/%d/%y')
+    date = checkout.last_change.strftime("%m/%d/%y")
     data = RequestData(
         EffectiveDate=date,
         InvoiceDate=date,
         InvoiceNumber=checkout_id,
         TitleTransferCode="DEST",
         TransactionType="RETAIL",
-        TransactionLines=lines
+        TransactionLines=lines,
     )
 
     # return {"createTransactionModel": data}
