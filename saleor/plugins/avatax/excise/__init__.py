@@ -92,79 +92,35 @@ def api_get_request(
         return {}
 
 
+@dataclass
+class RequestData:
+    EffectiveDate: date
+    InvoiceDate: date
+    InvoiceNumber: str
+    TitleTransferCode: str
+    TransactionType: str
+    TransactionLines: List[Dict[str, Union[str, int, bool, None]]]
+
+
 def generate_request_data(
-    transaction_type: str,
     lines: List[Dict[str, Any]],
-    transaction_token: str,
-    address: Dict[str, str],
-    customer_email: str,
+    checkout: "Checkout",
     config: AvataxConfiguration,
-    currency: str,
 ):
-    company_address = Site.objects.get_current().settings.company_address
-    if company_address:
-        company_address = company_address.as_data()
-    else:
-        logging.warning(
-            "To correct calculate taxes by Avatax, company address should be provided "
-            "in dashboard.settings."
-        )
-        company_address = {}
+    checkout_id = str(checkout.token)
+    data: Dict = {}
 
-    # fun = [
-    #     {
-    #         "quantity": 1,
-    #         "amount": "7.00",
-    #         "taxCode": "O9999999",
-    #         "taxIncluded": True,
-    #         "itemCode": "80884671",
-    #         "description": "Apple Juice",
-    #     },
-    #     {
-    #         "quantity": 1,
-    #         "amount": "29.830",
-    #         "taxCode": "FR020100",
-    #         "taxIncluded": True,
-    #         "itemCode": "Shipping",
-    #         "description": None,
-    #     },
-    # ]
+    data = RequestData(
+        EffectiveDate=checkout.last_change,
+        InvoiceDate=checkout.last_change,
+        InvoiceNumber=checkout_id,
+        TitleTransferCode="DEST",
+        TransactionType="RETAIL",
+        TransactionLines=lines
+    )
 
-    # transaction_lines = [{"InvoiceLine": } for line in lines]
-
-    data = {"TransactionLines": [lines]}
-
-    data = {
-        "companyCode": config.company_name,
-        "type": transaction_type,
-        "lines": lines,
-        "code": transaction_token,
-        "date": str(date.today()),
-        # https://developer.avalara.com/avatax/dev-guide/transactions/simple-transaction/
-        "customerCode": 0,
-        "addresses": {
-            "shipFrom": {
-                "line1": company_address.get("street_address_1"),
-                "line2": company_address.get("street_address_2"),
-                "city": company_address.get("city"),
-                "region": company_address.get("country_area"),
-                "country": company_address.get("country"),
-                "postalCode": company_address.get("postal_code"),
-            },
-            "shipTo": {
-                "line1": address.get("street_address_1"),
-                "line2": address.get("street_address_2"),
-                "city": address.get("city"),
-                "region": address.get("country_area"),
-                "country": address.get("country"),
-                "postalCode": address.get("postal_code"),
-            },
-        },
-        "commit": config.autocommit,
-        "currencyCode": currency,
-        "email": customer_email,
-    }
-    return {"createTransactionModel": data}
+    # return {"createTransactionModel": data}
+    return data
 
 
 @dataclass
@@ -255,29 +211,6 @@ def get_checkout_lines_data(
                 OriginPostalCode=warehouse.address.postal_code,
             )
         )
-        # name = line.variant.product.name
-        # product = line.variant.product
-        # collections = product.collections.all()
-        # channel_listing = line.variant.channel_listings.get(channel=channel)
-        # product_type = line.variant.product.product_type
-        # tax_code = retrieve_tax_code_from_meta(product, default=None)
-        # tax_code = tax_code or retrieve_tax_code_from_meta(product_type)
-        # append_line_to_data(
-        #     data=data,
-        #     quantity=line.quantity,
-        #     amount=base_calculations.base_checkout_line_total(
-        #         line,
-        #         line.variant,
-        #         product,
-        #         collections,
-        #         channel,
-        #         channel_listing,
-        #         discounts,
-        #     ).gross.amount,
-        #     tax_code=tax_code,
-        #     item_code=line.variant.sku,
-        #     name=name,
-        # )
 
     # append_shipping_to_data(data, checkout.shipping_method, checkout.channel_id)
     print('line data', data)
@@ -291,20 +224,13 @@ def generate_request_data_from_checkout(
     transaction_type=TransactionType.ORDER,
     discounts=None,
 ):
-
-    # address = checkout.shipping_address or checkout.billing_address
     lines = get_checkout_lines_data(checkout, discounts)
-
-    currency = checkout.currency
     data = generate_request_data(
-        transaction_type=transaction_type,
+        checkout=checkout,
         lines=lines,
-        transaction_token=transaction_token or str(checkout.token),
-        # address=address.as_data() if address else {},
-        # customer_email=checkout.email,
         config=config,
-        currency=currency,
     )
+
     return data
 
 
