@@ -111,7 +111,6 @@ def generate_request_data(
         )
         company_address = {}
 
-    print(lines)
     # fun = [
     #     {
     #         "quantity": 1,
@@ -194,21 +193,13 @@ class TransactionLine:
 
     """ WIP """
     Origin: Optional[str]
-    OriginType: Optional[str]
     OriginCountryCode: str
     OriginJurisdiction: str  # state or region
-    OriginCounty: str  # is this really required?
+    OriginCounty: str
     OriginCity: str
     OriginPostalCode: str
     OriginAddress1: str
     OriginAddress2: Optional[str]
-
-    # should we even include these?
-    OriginAirportCode: Optional[str]
-    OriginOutCityLimitInd: Optional[str]
-    OriginExciseWarehouse: Optional[str]
-    OriginSpecialJurisdictionInd: Optional[str]
-    OriginSpecialJurisdictions: Optional[List[str]]
 
 
 def get_checkout_lines_data(
@@ -245,19 +236,23 @@ def get_checkout_lines_data(
                 DestinationAddress1=shipping_address.street_address_1,
                 DestinationAddress2=shipping_address.street_address_2,
                 DestinationCity=shipping_address.city,
+                DestinationCounty=shipping_address.city_area,
                 DestinationPostalCode=shipping_address.postal_code,
                 SaleCountryCode=shipping_address.country.alpha3,
                 SaleJurisdiction=shipping_address.country_area,
                 SaleAddress1=shipping_address.street_address_1,
                 SaleAddress2=shipping_address.street_address_2,
                 SaleCity=shipping_address.city,
+                SaleCounty=shipping_address.city_area,
                 SalePostalCode=shipping_address.postal_code,
-                OriginCountryCode=warehouse.country.alpha3,
-                OriginJurisdiction=warehouse.country_area,
-                OriginAddress1=warehouse.street_address_1,
-                OriginAddress2=warehouse.street_address_2,
-                OriginCity=warehouse.city,
-                OriginPostalCode=warehouse.postal_code,
+                Origin=warehouse.id,  # check with avalara?
+                OriginCountryCode=warehouse.address.country.alpha3,
+                OriginJurisdiction=warehouse.address.country_area,
+                OriginAddress1=warehouse.address.street_address_1,
+                OriginAddress2=warehouse.address.street_address_2,
+                OriginCity=warehouse.address.city,
+                OriginCounty=warehouse.address.city_area,
+                OriginPostalCode=warehouse.address.postal_code,
             )
         )
         # name = line.variant.product.name
@@ -285,6 +280,7 @@ def get_checkout_lines_data(
         # )
 
     # append_shipping_to_data(data, checkout.shipping_method, checkout.channel_id)
+    print('line data', data)
     return data
 
 
@@ -296,7 +292,7 @@ def generate_request_data_from_checkout(
     discounts=None,
 ):
 
-    address = checkout.shipping_address or checkout.billing_address
+    # address = checkout.shipping_address or checkout.billing_address
     lines = get_checkout_lines_data(checkout, discounts)
 
     currency = checkout.currency
@@ -304,8 +300,8 @@ def generate_request_data_from_checkout(
         transaction_type=transaction_type,
         lines=lines,
         transaction_token=transaction_token or str(checkout.token),
-        address=address.as_data() if address else {},
-        customer_email=checkout.email,
+        # address=address.as_data() if address else {},
+        # customer_email=checkout.email,
         config=config,
         currency=currency,
     )

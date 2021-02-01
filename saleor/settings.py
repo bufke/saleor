@@ -40,6 +40,8 @@ PROJECT_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
 
 ROOT_URLCONF = "saleor.urls"
 
+COMPOSE_HTTP_TIMEOUT = 200
+
 WSGI_APPLICATION = "saleor.wsgi.application"
 
 ADMINS = (
