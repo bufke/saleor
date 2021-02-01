@@ -1,5 +1,6 @@
 import json
 import logging
+import dataclasses
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
@@ -47,9 +48,12 @@ def api_post_request(
     url: str, data: Dict[str, Any], config: AvataxConfiguration
 ) -> Dict[str, Any]:
     response = None
+    data_dict = dataclasses.asdict(data)
+    print('data dictttt', data_dict)
     try:
         auth = HTTPBasicAuth(config.username_or_account, config.password_or_license)
-        response = requests.post(url, auth=auth, data=json.dumps(data), timeout=TIMEOUT)
+        response = requests.post(
+            url, auth=auth, data=json.dumps(data_dict), timeout=TIMEOUT)
         logger.debug("Hit to Avatax to calculate taxes %s", url)
         json_response = response.json()
         if "error" in response:  # type: ignore
@@ -109,10 +113,10 @@ def generate_request_data(
 ):
     checkout_id = str(checkout.token)
     data: Dict = {}
-
+    date = checkout.last_change.strftime('%m/%d/%y')
     data = RequestData(
-        EffectiveDate=checkout.last_change,
-        InvoiceDate=checkout.last_change,
+        EffectiveDate=date,
+        InvoiceDate=date,
         InvoiceNumber=checkout_id,
         TitleTransferCode="DEST",
         TransactionType="RETAIL",
@@ -213,7 +217,6 @@ def get_checkout_lines_data(
         )
 
     # append_shipping_to_data(data, checkout.shipping_method, checkout.channel_id)
-    print('line data', data)
     return data
 
 
@@ -238,3 +241,7 @@ def get_checkout_tax_data(
     checkout: "Checkout", discounts, config: AvataxConfiguration
 ) -> Dict[str, Any]:
     data = generate_request_data_from_checkout(checkout, config, discounts=discounts)
+    url = get_api_url()
+    print("data tyyype", data)
+    tax_response = api_post_request(url, data, config)
+    print("taxxx", tax_response)
