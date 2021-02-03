@@ -8,6 +8,7 @@ import opentracing
 import opentracing.tags
 from django.core.exceptions import ValidationError
 from prices import Money, TaxedMoney, TaxedMoneyRange
+# from ....checkout.models import Checkout
 
 from ....core.taxes import TaxError
 from ....discount import DiscountInfo
@@ -109,43 +110,100 @@ class AvataxExcisePlugin(BasePlugin):
                 code=PluginErrorCode.PLUGIN_MISCONFIGURED.value,
             )
 
-    def calculate_checkout_line_total(
+    def calculate_checkout_total(
         self,
         checkout: "Checkout",
-        checkout_line: "CheckoutLine",
-        variant: "ProductVariant",
-        product: "Product",
-        collections: Iterable["Collection"],
+        lines: Iterable["CheckoutLine"],
         address: Optional["Address"],
-        channel: "Channel",
-        channel_listing: "ProductVariantChannelListing",
         discounts: Iterable[DiscountInfo],
         previous_value: TaxedMoney,
     ) -> TaxedMoney:
-        # if self._skip_plugin(previous_value):
-        #     print("skip plugin")
-        #     return previous_value
+        if self._skip_plugin(previous_value):
+            return previous_value
 
-        base_total = previous_value
-        if not checkout_line.variant.product.charge_taxes:
-            print("dont charge taxes")
-            return base_total
+        checkout_total = previous_value
 
-        if not _validate_checkout(checkout, [checkout_line]):
-            print("checkout not valid")
-            return base_total
+        if not _validate_checkout(checkout, [line_info.line for line_info in lines]):
+            return checkout_total
 
-        taxes_data = get_checkout_tax_data(checkout, discounts, self.config)
-        if not taxes_data or "error" in taxes_data:
-            return base_total
+        tax_response = get_checkout_tax_data(checkout, discounts, self.config)
 
-        currency = taxes_data.get("currencyCode")
-        for line in taxes_data.get("lines", []):
-            if line.get("itemCode") == variant.sku:
-                tax = Decimal(line.get("tax", 0.0))
-                line_net = Decimal(line["lineAmount"])
-                line_gross = Money(amount=line_net + tax, currency=currency)
-                line_net = Money(amount=line_net, currency=currency)
-                return TaxedMoney(net=line_net, gross=line_gross)
+        if not tax_response or "Error" in tax_response["Status"]:
+            return checkout_total
 
-        return base_total
+        # store itemized tax information in Checkout metadata for optional display on the frontend
+        # if there are no taxes, itemized taxes = []
+
+        # tax_item = {"itemized_taxes": tax_response["TransactionTaxes"]}
+        # checkout_obj = Checkout.objects.filter(token=checkout.token).first()
+        # checkout_obj.store_value_in_metadata(items=tax_item)
+        # checkout_obj.save()
+
+        # currency is stored on individual tax lines in TransactionTaxes
+        # if there are tax lines we take the currency of the first one, assuming they are all the same
+
+        if tax_response["TransactionTaxes"][0]:
+            currency = tax_response["TransactionTaxes"][0]["Currency"]
+        else:
+            currency = settings.DEFAULT_CURRENCY
+
+        tax = tax_response["TotalTaxAmount"]
+        # total_net = Decimal(response.get("totalAmount", 0.0))
+        # TKTK NEED TO ADD THESE TOGETHER BUT THEY ARE NOT THE SAME TYPE
+        total_net = checkout_total.amount + tax
+        print("totttal net", total_net)
+        total_gross = Money(amount=total_net + tax, currency=currency)
+        total_net = Money(amount=total_net, currency=currency)
+        taxed_total = TaxedMoney(net=total_net, gross=total_gross)
+        total = self._append_prices_of_not_taxed_lines(
+            taxed_total, lines, checkout.channel, discounts
+        )
+
+        voucher_value = checkout.discount
+        if voucher_value:
+            total -= voucher_value
+
+        zorp = max(total, zero_taxed_money(total.currency))
+        print("zorp", zorp)
+        return max(total, zero_taxed_money(total.currency))
+
+    # def calculate_checkout_line_total(
+    #     self,
+    #     checkout: "Checkout",
+    #     checkout_line: "CheckoutLine",
+    #     variant: "ProductVariant",
+    #     product: "Product",
+    #     collections: Iterable["Collection"],
+    #     address: Optional["Address"],
+    #     channel: "Channel",
+    #     channel_listing: "ProductVariantChannelListing",
+    #     discounts: Iterable[DiscountInfo],
+    #     previous_value: TaxedMoney,
+    # ) -> TaxedMoney:
+    #     if self._skip_plugin(previous_value):
+    #         print("skip plugin")
+    #         return previous_value
+
+    #     base_total = previous_value
+    #     if not checkout_line.variant.product.charge_taxes:
+    #         return base_total
+
+    #     if not _validate_checkout(checkout, [checkout_line]):
+    #         return base_total
+
+    #     taxes_data = get_checkout_tax_data(checkout, discounts, self.config)
+    #     if not taxes_data or "error" in taxes_data:
+    #         print("error in taxes")
+    #         return base_total
+
+    #     currency = taxes_data.get("currencyCode")
+
+    #     for line in taxes_data.get("lines", []):
+    #         if line.get("itemCode") == variant.sku:
+    #             tax = Decimal(line.get("tax", 0.0))
+    #             line_net = Decimal(line["lineAmount"])
+    #             line_gross = Money(amount=line_net + tax, currency=currency)
+    #             line_net = Money(amount=line_net, currency=currency)
+    #             return TaxedMoney(net=line_net, gross=line_gross)
+
+    #     return base_total

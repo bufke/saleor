@@ -73,7 +73,7 @@ def api_post_request(
         response = requests.post(
             url + "AvaTaxExcise/transactions/create", headers=headers, auth=auth, data=formatted_data
         )
-        # Do we need to set a timeout here?
+        # Do we want to set a timeout here?
         logger.debug("Hit to Avatax to calculate taxes %s", url)
         json_response = response.json()
         if "error" in response:  # type: ignore
@@ -120,7 +120,6 @@ def api_get_request(
 class RequestData:
     EffectiveDate: date
     InvoiceDate: date
-    InvoiceNumber: str
     TitleTransferCode: str
     TransactionType: str
     TransactionLines: List[Dict[str, Union[str, int, bool, None]]]
@@ -137,13 +136,10 @@ def generate_request_data(
     data = RequestData(
         EffectiveDate=date,
         InvoiceDate=date,
-        InvoiceNumber=6,
         TitleTransferCode="DEST",
         TransactionType="RETAIL",
         TransactionLines=lines,
     )
-
-    # return {"createTransactionModel": data}
 
     return data
 
