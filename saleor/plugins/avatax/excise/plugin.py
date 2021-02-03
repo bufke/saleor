@@ -129,14 +129,17 @@ class AvataxExcisePlugin(BasePlugin):
         discounts: Iterable[DiscountInfo],
         previous_value: TaxedMoney,
     ) -> TaxedMoney:
-        if self._skip_plugin(previous_value):
-            return previous_value
+        # if self._skip_plugin(previous_value):
+        #     print("skip plugin")
+        #     return previous_value
 
         base_total = previous_value
         if not checkout_line.variant.product.charge_taxes:
+            print("dont charge taxes")
             return base_total
 
         if not _validate_checkout(checkout, [checkout_line]):
+            print("checkout not valid")
             return base_total
 
         taxes_data = get_checkout_tax_data(checkout, discounts, self.config)

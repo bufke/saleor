@@ -4,6 +4,7 @@ import logging
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
+from uuid import UUID
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Union
 from urllib.parse import urljoin
 
@@ -37,6 +38,17 @@ class AvataxConfiguration:
     autocommit: bool = False
 
 
+class EnhancedJSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if dataclasses.is_dataclass(o):
+            return dataclasses.asdict(o)
+        if isinstance(o, Decimal):
+            return str(o)
+        if isinstance(o, UUID):
+            return o.hex
+        return super().default(o)
+
+
 def get_api_url(use_sandbox=True) -> str:
     """Based on settings return sanbox or production url."""
     if use_sandbox:
@@ -48,13 +60,15 @@ def api_post_request(
     url: str, data: Dict[str, Any], config: AvataxConfiguration
 ) -> Dict[str, Any]:
     response = None
-    data_dict = dataclasses.asdict(data)
-    print("data dictttt", data_dict)
     try:
         auth = HTTPBasicAuth(config.username, config.password)
+        headers = {'x-company-id': config.company_id,
+                   'Content-Type': 'application/json'}
+        formatted_data = json.dumps(data, cls=EnhancedJSONEncoder)
         response = requests.post(
-            url, auth=auth, data=json.dumps(data_dict), timeout=TIMEOUT
+            url + "AvaTaxExcise/transactions/create", headers=headers, auth=auth, data=formatted_data
         )
+        # Do we need to set a timeout here?
         logger.debug("Hit to Avatax to calculate taxes %s", url)
         json_response = response.json()
         if "error" in response:  # type: ignore
@@ -118,13 +132,14 @@ def generate_request_data(
     data = RequestData(
         EffectiveDate=date,
         InvoiceDate=date,
-        InvoiceNumber=checkout_id,
+        InvoiceNumber=6,
         TitleTransferCode="DEST",
         TransactionType="RETAIL",
         TransactionLines=lines,
     )
 
     # return {"createTransactionModel": data}
+
     return data
 
 
@@ -182,6 +197,7 @@ def get_checkout_lines_data(
             checkout.shipping_address.country
         ).first()
         warehouse = stock.warehouse
+
         data.append(
             TransactionLine(
                 InvoiceLine=line.id,
@@ -218,6 +234,7 @@ def get_checkout_lines_data(
         )
 
     # append_shipping_to_data(data, checkout.shipping_method, checkout.channel_id)
+
     return data
 
 
@@ -241,9 +258,8 @@ def generate_request_data_from_checkout(
 def get_checkout_tax_data(
     checkout: "Checkout", discounts, config: AvataxConfiguration
 ) -> Dict[str, Any]:
+    print("getting checkout taxxx")
     data = generate_request_data_from_checkout(checkout, config, discounts=discounts)
     url = get_api_url()
-    data_dict = dataclasses.asdict(data)
-    print('data dictttt', data_dict)
     tax_response = api_post_request(url, data, config)
-    print("taxxx", tax_response)
+    return tax_response
