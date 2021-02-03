@@ -48,12 +48,10 @@ def api_post_request(
     url: str, data: Dict[str, Any], config: AvataxConfiguration
 ) -> Dict[str, Any]:
     response = None
-    data_dict = dataclasses.asdict(data)
-    print('data dictttt', data_dict)
     try:
         auth = HTTPBasicAuth(config.username_or_account, config.password_or_license)
         response = requests.post(
-            url, auth=auth, data=json.dumps(data_dict), timeout=TIMEOUT)
+            url, auth=auth, data=json.dumps(data), timeout=TIMEOUT)
         logger.debug("Hit to Avatax to calculate taxes %s", url)
         json_response = response.json()
         if "error" in response:  # type: ignore
@@ -242,6 +240,7 @@ def get_checkout_tax_data(
 ) -> Dict[str, Any]:
     data = generate_request_data_from_checkout(checkout, config, discounts=discounts)
     url = get_api_url()
-    print("data tyyype", data)
+    data_dict = dataclasses.asdict(data)
+    print('data dictttt', data_dict)
     tax_response = api_post_request(url, data, config)
     print("taxxx", tax_response)
