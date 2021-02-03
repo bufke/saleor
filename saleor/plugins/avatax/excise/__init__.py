@@ -28,6 +28,11 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def get_metadata_key(key_name: str):
+    """ Namespace metadata key names: PLUGIN_ID:Key """
+    return "mirumee.taxes.avalara_excise:" + key_name
+
+
 @dataclass
 class AvataxConfiguration:
     username_or_account: str
@@ -136,6 +141,7 @@ class TransactionLine:
     BilledUnits: Decimal
     AlternateUnitPrice: Optional[Decimal]
     TaxIncluded: bool
+    UnitQuantity: Optional[int]
     DestinationCountryCode: str
     """ ISO 3166-1 alpha-3 code """
     DestinationJurisdiction: str
@@ -162,6 +168,13 @@ class TransactionLine:
     OriginAddress1: str
     OriginAddress2: Optional[str]
 
+    CustomString1: Optional[str]
+    CustomString2: Optional[str]
+    CustomString3: Optional[str]
+    CustomNumeric1: Optional[Decimal]
+    CustomNumeric2: Optional[Decimal]
+    CustomNumeric3: Optional[Decimal]
+
 
 def get_checkout_lines_data(
     checkout: "Checkout", discounts=None
@@ -177,21 +190,24 @@ def get_checkout_lines_data(
     shipping_address = checkout.shipping_address
 
     for line in lines:
-        channel_listing = line.variant.channel_listings.get(channel=channel)
-        stock = line.variant.stocks.for_country(
-            checkout.shipping_address.country
-        ).first()
+        variant = line.variant
+        channel_listing = variant.channel_listings.get(channel=channel)
+        stock = variant.stocks.for_country(checkout.shipping_address.country).first()
         warehouse = stock.warehouse
+        cost_price = (
+            channel_listing.cost_price.amount if channel_listing.cost_price else None
+        )
         data.append(
             TransactionLine(
                 InvoiceLine=line.id,
-                ProductCode=line.variant.sku,
+                ProductCode=variant.sku,
                 UnitPrice=channel_listing.price.amount,
                 BilledUnits=line.quantity,
-                AlternateUnitPrice=channel_listing.cost_price.amount
-                if channel_listing.cost_price
-                else None,
+                AlternateUnitPrice=cost_price,
                 TaxIncluded=tax_included,
+                UnitQuantity=variant.get_value_from_private_metadata(
+                    get_metadata_key("UnitQuantity")
+                ),
                 DestinationCountryCode=shipping_address.country.alpha3,
                 DestinationJurisdiction=shipping_address.country_area,
                 DestinationAddress1=shipping_address.street_address_1,
@@ -214,6 +230,24 @@ def get_checkout_lines_data(
                 OriginCity=warehouse.address.city,
                 OriginCounty=warehouse.address.city_area,
                 OriginPostalCode=warehouse.address.postal_code,
+                CustomString1=variant.get_value_from_private_metadata(
+                    get_metadata_key("CustomString1")
+                ),
+                CustomString2=variant.get_value_from_private_metadata(
+                    get_metadata_key("CustomString2")
+                ),
+                CustomString3=variant.get_value_from_private_metadata(
+                    get_metadata_key("CustomString3")
+                ),
+                CustomNumeric1=variant.get_value_from_private_metadata(
+                    get_metadata_key("CustomNumeric1")
+                ),
+                CustomNumeric2=variant.get_value_from_private_metadata(
+                    get_metadata_key("CustomNumeric2")
+                ),
+                CustomNumeric3=variant.get_value_from_private_metadata(
+                    get_metadata_key("CustomNumeric3")
+                ),
             )
         )
 

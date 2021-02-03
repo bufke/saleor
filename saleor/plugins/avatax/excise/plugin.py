@@ -14,7 +14,6 @@ from ....discount import DiscountInfo
 from ...base_plugin import BasePlugin, ConfigurationTypeField
 from ...error_codes import PluginErrorCode
 from .. import _validate_checkout
-from ..plugin import AvataxPlugin
 from . import api_get_request, api_post_request, get_api_url, get_checkout_tax_data
 
 logger = logging.getLogger(__name__)
@@ -37,7 +36,6 @@ class AvataxExcisePlugin(BasePlugin):
         {"name": "Password", "value": None},
         {"name": "Use sandbox", "value": True},
         {"name": "Company ID", "value": None},
-        {"name": "UnitQuantity", "value": "UnitQuantity"},
     ]
     CONFIG_STRUCTURE = {
         "Username": {
@@ -59,11 +57,6 @@ class AvataxExcisePlugin(BasePlugin):
             "type": ConfigurationTypeField.STRING,
             "help_text": "Avalara company ID.",
             "label": "Company ID",
-        },
-        "UnitQuantity": {
-            "type": ConfigurationTypeField.STRING,
-            "help_text": "Product Variant Unit Quantity private metadata key name. Optional. Defaults to UnitQuantity",
-            "label": "Unit Quantity private metadata key",
         },
     }
 
