@@ -14,8 +14,10 @@ from ....core.taxes import TaxError
 from ....discount import DiscountInfo
 from ...base_plugin import BasePlugin, ConfigurationTypeField
 from ...error_codes import PluginErrorCode
+from ....checkout.models import Checkout
 from .. import _validate_checkout
 from . import api_get_request, api_post_request, get_api_url, get_checkout_tax_data
+from ....core.taxes import TaxError, TaxType, charge_taxes_on_shipping, zero_taxed_money
 
 logger = logging.getLogger(__name__)
 
@@ -119,25 +121,117 @@ class AvataxExcisePlugin(BasePlugin):
         previous_value: TaxedMoney,
     ) -> TaxedMoney:
         if self._skip_plugin(previous_value):
+            logger.debug("Skip plugin %s", previous_value)
             return previous_value
 
         checkout_total = previous_value
 
         if not _validate_checkout(checkout, [line_info.line for line_info in lines]):
+            logger.debug("Checkout invalid %s")
             return checkout_total
 
-        tax_response = get_checkout_tax_data(checkout, discounts, self.config)
+        # tax_response = get_checkout_tax_data(checkout, discounts, self.config)
+        tax_response = {
+            "UserTranId": "e00ef935-79b2-48d9-b671-33c36bd58444",
+            "TranId": 38546949,
+            "Status": "Success",
+            "ReturnCode": 0,
+            "TotalTaxAmount": 60.21,
+            "TransactionTaxes": [
+                {
+                    "TransactionTaxAmounts": [],
+                    "SequenceId": 1,
+                    "TransactionLine": 1,
+                    "InvoiceLine": 220,
+                    "CountryCode": "USA",
+                    "Jurisdiction": "TX",
+                    "LocalJurisdiction": "48",
+                    "ProductCategory": 0.0,
+                    "TaxingLevel": "STA",
+                    "TaxType": "S",
+                    "RateType": "G",
+                    "RateSubtype": "NONE",
+                    "CalculationTypeInd": "P",
+                    "TaxRate": 0.062500,
+                    "TaxQuantity": 0.0,
+                    "TaxAmount": 45.61,
+                    "TaxExemptionInd": "N",
+                    "SalesTaxBaseAmount": 729.7900,
+                    "LicenseNumber": "",
+                    "RateDescription": "TX STATE TAX - TEXAS",
+                    "Currency": "USD",
+                    "SubtotalInd": "C",
+                    "StatusCode": "ACTIVE",
+                    "QuantityInd": "B"
+                },
+                {
+                    "TransactionTaxAmounts": [],
+                    "SequenceId": 2,
+                    "TransactionLine": 1,
+                    "InvoiceLine": 220,
+                    "CountryCode": "USA",
+                    "Jurisdiction": "TX",
+                    "LocalJurisdiction": "19000",
+                    "ProductCategory": 0.0,
+                    "TaxingLevel": "CIT",
+                    "TaxType": "S",
+                    "RateType": "G",
+                    "RateSubtype": "NONE",
+                    "CalculationTypeInd": "P",
+                    "TaxRate": 0.010000,
+                    "TaxQuantity": 0.0,
+                    "TaxAmount": 7.30,
+                    "TaxExemptionInd": "N",
+                    "SalesTaxBaseAmount": 729.7900,
+                    "LicenseNumber": "",
+                    "RateDescription": "TX CITY TAX - DALLAS",
+                    "Currency": "USD",
+                    "SubtotalInd": "C",
+                    "StatusCode": "ACTIVE",
+                    "QuantityInd": "B"
+                },
+                {
+                    "TransactionTaxAmounts": [],
+                    "SequenceId": 3,
+                    "TransactionLine": 1,
+                    "InvoiceLine": 220,
+                    "CountryCode": "USA",
+                    "Jurisdiction": "TX",
+                    "LocalJurisdiction": "6000816",
+                    "ProductCategory": 0.0,
+                    "TaxingLevel": "STJ",
+                    "TaxType": "S",
+                    "RateType": "G",
+                    "RateSubtype": "NONE",
+                    "CalculationTypeInd": "P",
+                    "TaxRate": 0.010000,
+                    "TaxQuantity": 0.0,
+                    "TaxAmount": 7.30,
+                    "TaxExemptionInd": "N",
+                    "SalesTaxBaseAmount": 729.7900,
+                    "LicenseNumber": "",
+                    "RateDescription": "TX SPECIAL TAX - DALLAS MTA TRANSIT",
+                    "Currency": "USD",
+                    "SubtotalInd": "C",
+                    "StatusCode": "ACTIVE",
+                    "QuantityInd": "B"
+                }
+            ],
+            "TransactionErrors": [],
+            "UserReturnValue": ""
+        }
 
         if not tax_response or "Error" in tax_response["Status"]:
+            logger.debug("Error in tax response %s")
             return checkout_total
 
         # store itemized tax information in Checkout metadata for optional display on the frontend
         # if there are no taxes, itemized taxes = []
 
-        # tax_item = {"itemized_taxes": tax_response["TransactionTaxes"]}
-        # checkout_obj = Checkout.objects.filter(token=checkout.token).first()
-        # checkout_obj.store_value_in_metadata(items=tax_item)
-        # checkout_obj.save()
+        tax_item = {"itemized_taxes": tax_response["TransactionTaxes"]}
+        checkout_obj = Checkout.objects.filter(token=checkout.token).first()
+        checkout_obj.store_value_in_metadata(items=tax_item)
+        checkout_obj.save()
 
         # currency is stored on individual tax lines in TransactionTaxes
         # if there are tax lines we take the currency of the first one, assuming they are all the same
@@ -147,14 +241,10 @@ class AvataxExcisePlugin(BasePlugin):
         else:
             currency = settings.DEFAULT_CURRENCY
 
-        tax = tax_response["TotalTaxAmount"]
-        # total_net = Decimal(response.get("totalAmount", 0.0))
-        # TKTK NEED TO ADD THESE TOGETHER BUT THEY ARE NOT THE SAME TYPE
-        total_net = checkout_total.amount + tax
-        print("totttal net", total_net)
-        total_gross = Money(amount=total_net + tax, currency=currency)
-        total_net = Money(amount=total_net, currency=currency)
-        taxed_total = TaxedMoney(net=total_net, gross=total_gross)
+        tax = Money(tax_response.get("TotalTaxAmount", 0.0), currency)
+        pre_tax = checkout_total.net
+        total_gross = pre_tax + tax
+        taxed_total = TaxedMoney(net=pre_tax, gross=total_gross)
         total = self._append_prices_of_not_taxed_lines(
             taxed_total, lines, checkout.channel, discounts
         )
@@ -163,8 +253,6 @@ class AvataxExcisePlugin(BasePlugin):
         if voucher_value:
             total -= voucher_value
 
-        zorp = max(total, zero_taxed_money(total.currency))
-        print("zorp", zorp)
         return max(total, zero_taxed_money(total.currency))
 
     # def calculate_checkout_line_total(
@@ -181,7 +269,6 @@ class AvataxExcisePlugin(BasePlugin):
     #     previous_value: TaxedMoney,
     # ) -> TaxedMoney:
     #     if self._skip_plugin(previous_value):
-    #         print("skip plugin")
     #         return previous_value
 
     #     base_total = previous_value
@@ -193,7 +280,6 @@ class AvataxExcisePlugin(BasePlugin):
 
     #     taxes_data = get_checkout_tax_data(checkout, discounts, self.config)
     #     if not taxes_data or "error" in taxes_data:
-    #         print("error in taxes")
     #         return base_total
 
     #     currency = taxes_data.get("currencyCode")
@@ -207,3 +293,26 @@ class AvataxExcisePlugin(BasePlugin):
     #             return TaxedMoney(net=line_net, gross=line_gross)
 
     #     return base_total
+
+    def _append_prices_of_not_taxed_lines(
+        self,
+        price: TaxedMoney,
+        lines: Iterable["CheckoutLineInfo"],
+        channel: "Channel",
+        discounts: Iterable[DiscountInfo],
+    ):
+        for line_info in lines:
+            if line_info.variant.product.charge_taxes:
+                continue
+            line_price = base_calculations.base_checkout_line_total(
+                line_info.line,
+                line_info.variant,
+                line_info.product,
+                line_info.collections,
+                channel,
+                line_info.channel_listing,
+                discounts,
+            )
+            price.gross.amount += line_price.gross.amount
+            price.net.amount += line_price.net.amount
+        return price

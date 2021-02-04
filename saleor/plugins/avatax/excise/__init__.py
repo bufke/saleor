@@ -73,6 +73,7 @@ def api_post_request(
         response = requests.post(
             url + "AvaTaxExcise/transactions/create", headers=headers, auth=auth, data=formatted_data
         )
+        print("response444", response)
         # Do we want to set a timeout here?
         logger.debug("Hit to Avatax to calculate taxes %s", url)
         json_response = response.json()
