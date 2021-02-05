@@ -1,3 +1,16 @@
 <mj-raw>
-  {% load static %}
+   {% load static %}
 </mj-raw>
+
+<mj-section padding="0">
+   <mj-column padding="0">
+      <mj-spacer height="14px" padding="0" container-background-color="#89744B" />
+      <mj-spacer height="24px" padding="0" container-background-color="#ffffff" />
+      <mj-image width="121px" height="70px" padding="0" href="https://www.laaurora.com.do/?lang=en" src="https://s3.amazonaws.com/tempur.email/test/la/la-aurora-logo.png" />
+   </mj-column>
+</mj-section>
+<mj-section padding="0" background-color="#ffffff">
+   <mj-column padding="0">
+      <mj-spacer height="30px" padding="0" />
+   </mj-column>
+</mj-section>

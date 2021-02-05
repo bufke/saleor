@@ -1,24 +1,65 @@
 <mjml>
-  <mj-head>
-    <mj-include path="./shared/styles.mjml" />
-  </mj-head>
-  <mj-body>
-    <mj-raw>
-      {% load i18n %}
-    </mj-raw>
-    <mj-include path="./shared/header.mjml" />
-    <mj-section>
-      <mj-column>
-        <mj-text font-size="16px">
-          {% trans "Hi!" context "Standard e-mail greeting" %}
-        </mj-text>
-        <mj-text>
-          {% blocktrans trimmed context "Order cancel e-mail text" %}
-            Your order has been canceled.
-          {% endblocktrans %}
-        </mj-text>
-      </mj-column>
-    </mj-section>
-    <mj-include path="./shared/footer.mjml" />
-  </mj-body>
+   <mj-head>
+      <mj-include path="./shared/styles.mjml" />
+      <mj-preview>Your Order Has Been Cancelled.</mj-preview>
+   </mj-head>
+   <mj-body>
+      <mj-raw>
+         {% load i18n %}
+      </mj-raw>
+      <mj-include path="./shared/header.mjml" />
+      <!-- /* original */
+      <mj-section>
+         <mj-column>
+            <mj-text font-size="16px">
+               {% trans "Hi!" context "Standard e-mail greeting" %}
+            </mj-text>
+            <mj-text>
+               {% blocktrans trimmed context "Order cancel e-mail text" %}
+               Your order has been canceled.
+               {% endblocktrans %}
+            </mj-text>
+         </mj-column>
+      </mj-section> 
+      -->
+
+      <mj-section padding="0" background-color="#ffffff">
+         <mj-column padding="0">
+            <mj-text align="center" padding="0 10px" font-family="'kaneda-gothic', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" font-size="50px" color="#36332B" text-transform="uppercase">
+               <h1 style="font-family: 'kaneda-gothic', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 50px; text-align: center; color: #36332B; text-transform: uppercase;">
+                  Your Order Has Been Cancelled
+               </h1>
+            </mj-text>
+            <mj-spacer height="40px" padding="0" />
+            <mj-text align="center" padding="0 10px" font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" font-size="16px" line-height="24px" color="#36332B">
+               We regret to inform you that your recent order has been cancelled. If you have any questions or concerns, please contact us as <a href="tel:809-546-8767" tabIndex="-1" class="" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;" target="_blank"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;">809-546-8767</b></a> and we will be happy to assist you.
+            </mj-text>
+            <mj-spacer height="36px" padding="0" />
+         </mj-column>
+      </mj-section>
+
+      <mj-include path="./shared/small-divider.mjml" />
+
+      <mj-section padding="0" background-color="#ffffff">
+         <mj-column padding="0">
+            <mj-spacer height="36px" padding="0" />
+            <mj-text align="center" padding="0 10px">
+               <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order Date</b>: {% order.created %}</span> <span class="mobile-display-none" style="width:20px; height:15px; display: inline-block;">&nbsp;</span>
+               <br class="mobile-display-block" style="display: none;">
+               <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order No</b>: {% order.number %}</span>
+            </mj-text>
+            <mj-spacer height="40px" padding="0" />
+         </mj-column>
+      </mj-section>
+
+      <mj-section padding="0" background-color="#ffffff">
+         <mj-column padding="0">
+            <mj-button width="270px" height="60px" border-radius="0" font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" background-color="#36332B" color="#ffffff" font-size="12px" text-transform="uppercase" href="{{ order_details_url }}">
+               Check Order Status
+            </mj-button>
+         </mj-column>
+      </mj-section>
+
+      <mj-include path="./shared/footer.mjml" />
+   </mj-body>
 </mjml>

@@ -1,28 +1,68 @@
 <mj-style inline="inline">
-  .no-display {
-    display: none;
-  }
+   .no-display {
+      display: none;
+   }
 
-  .no-padding td {
-    padding: 0px;
-  }
+   .no-padding td {
+      padding: 0px;
+   }
 
-  td, th {
-    padding: 5px;
-  }
+   td,
+   th {
+      padding: 5px;
+   }
 
-  .table-header-row {
-     border-bottom: 2px solid #000;
-  }
+   .table-header-row {
+      border-bottom: 2px solid #000;
+   }
 
-  .table-item-row {
-    border-bottom: 1px solid #D3D1D0;
-  }
+   .table-item-row {
+      border-bottom: 1px solid #D3D1D0;
+   }
 </mj-style>
 <mj-style>
+   address {
+      font-style: inherit;
+      font-family: Ubuntu, Helvetica, Arial;
+   }
+</mj-style>
 
-  address {
-    font-style: inherit;
-    font-family: Ubuntu, Helvetica, Arial;
-  }
+<mj-style>
+   @import url("https://use.typekit.net/cxl2bwq.css");
+
+   @media only screen and (max-width: 640px) {
+
+      .mobile-full-width div,
+      .mobile-full-width {
+         width: 100% !important;
+      }
+
+      /* hide / show */
+      .mobile-display-block div,
+      .mobile-display-block {
+         float: left;
+         display: block !important;
+      }
+
+      .mobile-display-none div,
+      .mobile-display-none {
+         display: none !important;
+      }
+
+      /* text-align */
+      .mobile-text-left div,
+      .mobile-text-left {
+         text-align: left !important;
+      }
+
+      .mobile-text-center div,
+      .mobile-text-center {
+         text-align: center !important;
+      }
+
+      .mobile-text-right div,
+      .mobile-text-right {
+         text-align: right !important;
+      }
+   }
 </mj-style>

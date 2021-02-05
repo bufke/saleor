@@ -1,79 +1,170 @@
 <mj-raw>
-  {% load display_translated_order_line_name from order_lines %}
-  {% load price from taxed_prices %}
-  {% load voucher %}
+   {% load display_translated_order_line_name from order_lines %}
+   {% load price from taxed_prices %}
+   {% load voucher %}
 </mj-raw>
-<mj-section>
-  <mj-column>
-    <mj-table>
-      <tfoot>
-        <tr>
-          <td colspan="3" style="text-align: right;">
-            {% trans "Subtotal" context "E-mail order lines summary table" %}
-          </td>
-          <td style="text-align: right;">
-            {% price order.get_subtotal display_gross=order.display_gross_prices html=False %}
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3" style="text-align: right;">
-            {% trans "Shipping" context "E-mail order lines summary table" %}
-          </td>
-          <td style="text-align: right;">
-            {% price order.shipping_price display_gross=order.display_gross_prices html=False %}
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3" style="text-align: right;">
-            {% if order.display_gross_prices %}
-              {% trans "Taxes (included)" context "E-mail order lines summary table" %}
-            {% else %}
-              {% trans "Taxes" context "E-mail order lines summary table" %}
-            {% endif %}
-          </td>
-          <td style="text-align: right;">
-            {% price order.total.tax html=False %}
-          </td>
-        </tr>
-        {% if order.discount_amount %}
-          <tr>
-            <td colspan="3" style="text-align: right;">
-              {% trans "Discount" context "E-mail order lines summary table" %}
+
+<mj-raw>
+{% for line in order %}
+</mj-raw>
+
+<mj-section padding="0">
+   <mj-column padding="0">
+      <mj-table>
+         <tr>
+            <td class="" width="600" align="right" valign="top">
+               <table class="mobile-full-width" width="540" border="0" cellspacing="0" cellpadding="0" bgcolor="">
+                  <tr>
+                     <td class="mobile-full-width mobile-display-block mobile-text-left" width="100" align="left" valign="top">
+                        <a style="text-decoration:none;" target="_blank" href="#">
+                           <img class="" src="http://{{ domain }}{{ line.variant.get_first_image.image.url }}" width="100" height="100" alt="la aurora" border="0" style="width: 100px; height:100px; display: block;">
+                        </a>
+                     </td>
+                     <td class="mobile-full-width mobile-display-block mobile-text-left" width="300" align="left" valign="top">
+                        <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B;">{% display_translated_order_line_name line %}</span>
+                        <br>
+                        <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px;">
+                           {% if line.variant.pricing.price_undiscounted %}
+                           <a style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B; text-decoration:line-through;"><span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B; text-decoration:line-through;">{{ line.variant.pricing.price_undiscounted }}</span></a>
+                           <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #AB422F;">{{ line.variant.pricing.price}} </span>
+                           {% else %}
+                           <b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px;">Price</b>: {% price line.unit_price display_gross=order.display_gross_prices html=False %}
+                           {% endif %}
+                           <br>
+                           <b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px;">Qty</b>: {{ line.quantity }}</span>
+                        <br>
+                     </td>
+                     <td class="mobile-full-width mobile-display-block mobile-text-left" width="100" align="right" valign="top">
+                        <span class="mobile-text-left" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B;">{% price line.get_total display_gross=order.display_gross_prices html=False %}</span>
+                        <br>
+                     </td>
+                  </tr>
+               </table>
             </td>
-            <td style="text-align: right;">
-              {% discount_as_negative order.discount html=True %}
+         </tr>
+      </mj-table>
+   </mj-column>
+</mj-section>
+<mj-section padding="0">
+   <mj-column padding="0">
+      <mj-divider width="100%" border-width="1px" border-style="solid" border-color="#bababa" />
+   </mj-column>
+</mj-section>
+
+<mj-raw>
+{% endfor %}
+</mj-raw>
+
+<mj-section padding="0" background-color="#ffffff">
+   <mj-column padding="0">
+      <mj-spacer height="10px" padding="0" />
+   </mj-column>
+</mj-section>
+
+<!-- total -->
+<mj-section padding="0">
+   <mj-column padding="0">
+      <mj-table>
+         <tr>
+            <td class="" width="600" align="right" valign="top">
+               <table class="mobile-full-width" width="270" border="0" cellspacing="0" cellpadding="0" bgcolor="">
+                  <tr>
+                     <td class="" width="130" align="left" valign="top" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B;">
+                        Subtotal
+                     </td>
+                     <td width="10" align="left" valign="top" bgcolor="" style="min-width: 10px;">&nbsp;</td>
+                     <td class="" width="130" align="right" valign="top" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B;">
+                        {% price order.get_subtotal display_gross=order.display_gross_prices html=False %}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="" width="130" height="10" align="left" valign="top" bgcolor="" style="min-width: 130px; width: 130px; height:10px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+                     <td class="" width="10" height="10" align="left" valign="top" bgcolor="" style="min-width: 10px; width: 10px; height:10px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+                     <td class="" width="130" height="10" align="left" valign="top" bgcolor="" style="min-width: 130px; width: 130px; height:10px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+                  </tr>
+                  <tr>
+                     <td class="" width="130" align="left" valign="top" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B;">
+                        Shipping
+                     </td>
+                     <td width="10" align="left" valign="top" bgcolor="" style="min-width: 10px;">&nbsp;</td>
+                     <td class="" width="130" align="right" valign="top" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B;">
+                        {% price order.shipping_price display_gross=order.display_gross_prices html=False %}
+                     </td>
+                  </tr>
+                  {% if order.discount_amount %}
+                  <tr>
+                     <td class="" width="130" height="10" align="left" valign="top" bgcolor="" style="min-width: 130px; width: 130px; height:10px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+                     <td class="" width="10" height="10" align="left" valign="top" bgcolor="" style="min-width: 10px; width: 10px; height:10px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+                     <td class="" width="130" height="10" align="left" valign="top" bgcolor="" style="min-width: 130px; width: 130px; height:10px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+                  </tr>
+                  <tr>
+                     <td class="" width="130" align="left" valign="top" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B;">
+                        Discount
+                     </td>
+                     <td width="10" align="left" valign="top" bgcolor="" style="min-width: 10px;">&nbsp;</td>
+                     <td class="" width="130" align="right" valign="top" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #AB422F;">
+                        {% discount_as_negative order.discount html=True %}
+                     </td>
+                  </tr>
+                  {% endif %}
+                  <tr>
+                     <td class="" width="130" height="10" align="left" valign="top" bgcolor="" style="min-width: 130px; width: 130px; height:10px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+                     <td class="" width="10" height="10" align="left" valign="top" bgcolor="" style="min-width: 10px; width: 10px; height:10px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+                     <td class="" width="130" height="10" align="left" valign="top" bgcolor="" style="min-width: 130px; width: 130px; height:10px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+                  </tr>
+                  <tr>
+                     <td class="" width="130" align="left" valign="top" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B;">
+                        {% if order.display_gross_prices %}
+                        {% trans "Taxes (included)" context "E-mail order lines summary table" %}
+                        {% else %}
+                        {% trans "Taxes" context "E-mail order lines summary table" %}
+                        {% endif %}
+                     </td>
+                     <td width="10" align="left" valign="top" bgcolor="" style="min-width: 10px;">&nbsp;</td>
+                     <td class="" width="130" align="right" valign="top" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: normal; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B;">
+                        {% price order.total.tax html=False %}
+                     </td>
+                  </tr>
+               </table>
             </td>
-          </tr>
-        {% endif %}
-        <tr>
-          <td colspan="3" style="text-align: right;">
-            <strong>{% trans "Total" context "E-mail order lines summary table" %}</strong>
-          </td>
-          <td style="text-align: right;">
-            <strong>{% price order.total display_gross=order.display_gross_prices html=False %}</strong>
-          </td>
-        </tr>
-      </tfoot>
-      <thead class="table-header-row">
-        <tr>
-          <th>{% trans "Item" context "Ordered item name" %}</th>
-          <th>{% trans "Quantity" context "Quantity ordered of a product" %}</th>
-          <th>{% trans "Per unit" context "Unit price of a product" %}</th>
-          <th>{% trans "Subtotal" context "Ordered item subtotal (unit price * quantity)" %}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for line in order %}
-          <tr class="table-item-row">
-            <td>{% display_translated_order_line_name line %}</td>
-            <td style="text-align: right;">{{ line.quantity }}</td>
-            <td style="text-align: right;">
-              {% price line.unit_price display_gross=order.display_gross_prices html=False %}
+         </tr>
+         <tr>
+            <td class="" width="" height="10" align="left" valign="top" bgcolor="" style="min-width: px; width: px; height:10px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+         </tr>
+      </mj-table>
+   </mj-column>
+</mj-section>
+
+<mj-section padding="0">
+   <mj-column padding="0">
+      <mj-divider width="100%" border-width="1px" border-style="solid" border-color="#bababa" />
+   </mj-column>
+</mj-section>
+
+<mj-section padding="0">
+   <mj-column padding="0">
+      <mj-table>
+         <tr>
+            <td class="" width="" height="10" align="left" valign="top" bgcolor="" style="min-width: px; width: px; height:10px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+         </tr>
+         <tr>
+            <td class="" width="600" align="right" valign="top">
+               <table class="mobile-full-width" width="270" border="0" cellspacing="0" cellpadding="0" bgcolor="">
+                  <tr>
+                     <td class="" width="130" align="left" valign="top">
+                        <b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B;">Total</b>
+                     </td>
+                     <td width="10" align="left" valign="top" bgcolor="" style="min-width: 10px;">&nbsp;</td>
+                     <td class="" width="130" align="right" valign="top">
+                        <b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; color: #36332B;">{% price order.total display_gross=order.display_gross_prices html=False %}</b>
+                     </td>
+                  </tr>
+               </table>
             </td>
-            <td style="text-align: right;">{% price line.get_total display_gross=order.display_gross_prices html=False %}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </mj-table>
-  </mj-column>
+         </tr>
+         <tr>
+            <td class="" width="100%" height="50" align="left" valign="top" bgcolor="" style="min-width: 100%; width: 100%; height:50px; font-size:1px; line-height:1px; mso-line-height-rule:exactly;">&nbsp;</td>
+         </tr>
+      </mj-table>
+   </mj-column>
 </mj-section>

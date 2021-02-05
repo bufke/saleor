@@ -1,27 +1,103 @@
+<!-- 
 <mj-section>
-  <mj-column>
-    <mj-text>
-      {% blocktrans trimmed context "Base email text" %}
-        This is an automatically generated e-mail, please do not reply.
-      {% endblocktrans %}
-    </mj-text>
-  </mj-column>
+   <mj-column>
+      <mj-text>
+         {% blocktrans trimmed context "Base email text" %}
+         This is an automatically generated e-mail, please do not reply.
+         {% endblocktrans %}
+      </mj-text>
+   </mj-column>
 </mj-section>
 <mj-section background-color="#F2F2F2">
-  <mj-column>
-    <mj-text align="center">
-      {% blocktrans trimmed context "Base email footer" %}
-        Sincerely, {{ site_name }}
-      {% endblocktrans %}
-    </mj-text>
-  </mj-column>
+   <mj-column>
+      <mj-text align="center">
+         {% blocktrans trimmed context "Base email footer" %}
+         Sincerely, {{ site_name }}
+         {% endblocktrans %}
+      </mj-text>
+   </mj-column>
+</mj-section> 
+-->
+<mj-section padding="0" background-color="#ffffff">
+   <mj-column padding="0">
+      <mj-spacer height="50px" padding="0" />
+   </mj-column>
 </mj-section>
+<mj-section padding="0">
+   <mj-column padding="0">
+      <mj-image width="540px" align="center" padding="0" href="https://www.laaurora.com.do/?lang=en" src="https://s3.amazonaws.com/tempur.email/test/la/carisam-full-width.png" alt="This order is sold and shipped by Carisam" />
+   </mj-column>
+</mj-section>
+<mj-section padding="0">
+   <mj-column padding="0">
+      <mj-spacer height="30px" padding="0" />
+   </mj-column>
+</mj-section>
+<mj-section padding="0" background-color="#F6F5F1">
+   <mj-column padding="0">
+      <mj-spacer height="40px" padding="0" />
+      <mj-text font-family="'copperplate', Helvetica, Arial, sans-serif" font-weight="500" font-style="normal" font-size="16px" line-height="22px" align="center" color="#36332B" text-transform="uppercase">
+         Handcrafted
+         <br>
+         in the Dominican Republic
+         <br>
+         since 1903
+      </mj-text>
+   </mj-column>
+</mj-section>
+<mj-section padding="0" background-color="#F6F5F1">
+   <mj-column padding="0">
+      <mj-social icon-size="24px" mode="horizontal" border-radius="0">
+         <mj-social-element name="Instagram" alt="Instagram" href="https://www.instagram.com/laauroracigars/" src="https://s3.amazonaws.com/tempur.email/test/la/instagram.png" padding="0 40px 0 0">
+         </mj-social-element>
+         <mj-social-element name="Facebook" alt="Facebook" href="https://www.facebook.com/laauroracigarus" src="https://s3.amazonaws.com/tempur.email/test/la/facebook.png" padding="0 40px 0 0">
+         </mj-social-element>
+         <mj-social-element name="Twitter" alt="Twitter" href="https://twitter.com/LaAuroraCigars" src="https://s3.amazonaws.com/tempur.email/test/la/twitter.png" padding="0 40px 0 0">
+         </mj-social-element>
+         <mj-social-element name="Youtube" alt="Youtube" href="https://www.youtube.com/user/laauroracigar" src="https://s3.amazonaws.com/tempur.email/test/la/youtube.png">
+         </mj-social-element>
+      </mj-social>
+      <mj-spacer height="20px" padding="0" />
+      <mj-text font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" font-size="16px" line-height="22px" align="center" color="#36332B">
+         If you have any questions, reply to this email or contact us at
+         <a style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;" target="_blank" href="mailto:Laauroracs@carisam.com"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;">Laauroracs@carisam.com</b></a> or call us at <a href="tel:809-546-8767" tabIndex="-1" class="footer-link" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;" target="_blank"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;">809-546-8767</b></a>.
+         <br>
+         <br>
+         Carisam Samuel Meisel Inc. 10900 NW 27 Street Doral, Florida
+      </mj-text>
+      <mj-spacer height="24px" padding="0" />
+   </mj-column>
+</mj-section>
+<mj-section padding="0" background-color="#F6F5F1">
+   <mj-column padding="0">
+      <mj-text font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="normal" font-style="normal" font-size="16px" line-height="22px" align="center" color="#36332B">
+         &#169;{% now "Y" %} La Aurora Global Logistics
+         <span class="mobile-display-none" style="width:10px; height:15px; display: inline-block;">&nbsp;</span>
+         <br class="mobile-display-block" style="display: none;">
+         <a style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;" target="_blank" href="#"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;">Terms of Use</b></a>
+         <span class="mobile-display-none" style="width:10px; height:15px; display: inline-block;">&nbsp;</span>
+         <br class="mobile-display-block" style="display: none;">
+         <a style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;" target="_blank" href="#"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;">Privacy Policy</b></a>
+         <br>
+         <br>
+         You consented to receive (and will ensure that minors do not receive) the tobacco products you purchased online from a tobacco company. It is illegal for any person to sell, offer for sale, give, distribute, furnish, or provide tobacco products to any individual(s) under the age of 21. To the extent we were required to collect applicable state or local taxes from you at the time of purchase, we have done so. If we did not collect state or local taxes from you at the time of purchase, however, you are responsible for remitting the appropriate taxes to state or local authorities, as required by law.
+      </mj-text>
+      <mj-spacer height="30px" padding="0" />
+   </mj-column>
+</mj-section>
+
 <mj-section css-class="no-display">
-  <mj-column>
-    <mj-text>
-      {% if schema_markup %}
-        <script type="application/ld+json">{{ schema_markup|safe }}</script>
-      {% endif %}
-    </mj-text>
-  </mj-column>
+   <mj-column>
+      <mj-text>
+         {% if schema_markup %}
+         <script type="application/ld+json">
+            {
+               {
+                  schema_markup | safe
+               }
+            }
+         </script>
+         {% endif %}
+      </mj-text>
+   </mj-column>
 </mj-section>

@@ -1,56 +1,163 @@
 <mjml>
-  <mj-head>
-    <mj-include path="./shared/styles.mjml" />
-  </mj-head>
-  <mj-body>
-    <mj-raw>
-      {% load i18n %}
-      {% load i18n_address_tags %}
-    </mj-raw>
-    <mj-include path="./shared/header.mjml" />
-    <mj-section>
-      <mj-column>
-        <mj-text font-size="16px">
-          {% trans "Hi!" context "Standard e-mail greeting" %}
-        </mj-text>
-        <mj-text>
-          {% blocktrans trimmed context "Order confirmation staff e-mail text" %}
-            Someone placed a new order in your store. To see order details please visit: <a href="{{ order_details_url }}">{{ order_details_url }}</a>
-          {% endblocktrans %}
-        </mj-text>
-      </mj-column>
-    </mj-section>
-    <mj-include path="./partials/_order_lines.mjml" />
-    <mj-section>
-      <mj-column>
-        <mj-table>
-          <thead class="table-header-row">
-            <tr>
-              <th>{% trans "Billing address" context "Order confirmation e-mail billing address" %}</th>
-              <th>{% trans "Shipping address" context "Order confirmation e-mail shipping address" %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="address">
-                {% if order.billing_address %}
-                  {% format_address order.billing_address %}
-                {% else %}
-                  {% trans "No billing address" context "Order confirmation e-mail text" %}
-                {% endif %}
-              </td>
-              <td css-class="address">
-                {% if order.shipping_address %}
-                  {% format_address order.shipping_address %}
-                {% else %}
-                  {% trans "No shipping required" context "Order confirmation e-mail text" %}
-                {% endif %}
-              </td>
-            </tr>
-          </tbody>
-        </mj-table>
-      </mj-column>
-    </mj-section>
-    <mj-include path="./shared/footer.mjml" />
-  </mj-body>
+   <mj-head>
+      <mj-include path="./shared/styles.mjml" />
+      <mj-preview>Track your package.</mj-preview>
+   </mj-head>
+   <mj-body>
+      <mj-raw>
+         {% load i18n %}
+         {% load i18n_address_tags %}
+      </mj-raw>
+      <mj-include path="./shared/header.mjml" />
+      <!-- /* original */
+      <mj-section>
+         <mj-column>
+            <mj-text font-size="16px">
+               {% trans "Hi!" context "Standard e-mail greeting" %}
+            </mj-text>
+            <mj-text>
+               {% blocktrans trimmed context "Order confirmation staff e-mail text" %}
+               Someone placed a new order in your store. To see order details please visit: <a href="{{ order_details_url }}">{{ order_details_url }}</a>
+               {% endblocktrans %}
+            </mj-text>
+         </mj-column>
+      </mj-section>
+      -->
+
+      <mj-section padding="0" background-color="#ffffff">
+         <mj-column padding="0">
+            <mj-text align="center" padding="0 10px" font-family="'kaneda-gothic', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" font-size="50px" color="#36332B" text-transform="uppercase">
+               <h1 style="font-family: 'kaneda-gothic', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 50px; text-align: center; color: #36332B; text-transform: uppercase;">
+                  Your Items Have Shipped
+               </h1>
+            </mj-text>
+            <mj-spacer height="40px" padding="0" />
+            <mj-text align="center" padding="0 10px" font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" font-size="16px" line-height="24px" color="#36332B">
+               Items from your order have shipped. To track your delivery or check the status of any pending items, follow the link below.
+            </mj-text>
+            <mj-spacer height="36px" padding="0" />
+         </mj-column>
+      </mj-section>
+
+      <mj-include path="./shared/small-divider.mjml" />
+
+      <mj-section padding="0" background-color="#ffffff">
+         <mj-column padding="0">
+            <mj-spacer height="36px" padding="0" />
+            <mj-text align="center" padding="0 10px">
+               <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order Date</b>: {% order.created %}</span> <span class="mobile-display-none" style="width:20px; height:15px; display: inline-block;">&nbsp;</span>
+               <br class="mobile-display-block" style="display: none;">
+               <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order No</b>: {% order.number %}</span>
+            </mj-text>
+            <mj-spacer height="40px" padding="0" />
+         </mj-column>
+      </mj-section>
+
+      <mj-section padding="0" background-color="#ffffff">
+         <mj-column padding="0">
+            <mj-button width="270px" height="60px" border-radius="0" font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" background-color="#36332B" color="#ffffff" font-size="12px" text-transform="uppercase" href="{{ order_details_url }}">
+               Check Order Status
+            </mj-button>
+         </mj-column>
+      </mj-section>
+
+      <mj-section padding="0" background-color="#ffffff">
+         <mj-column padding="0">
+            <mj-spacer height="50px" padding="0" />
+            <mj-text align="center" padding="0 10px" font-family="'kaneda-gothic', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" font-size="30px" color="#36332B" text-transform="uppercase">
+               Shipment Details
+            </mj-text>
+            <mj-spacer height="36px" padding="0" />
+         </mj-column>
+      </mj-section>
+
+      <mj-include path="./partials/_order_lines.mjml" />
+
+      <mj-section padding="0" background-color="#ffffff">
+         <mj-column padding="0">
+            <mj-spacer height="50px" padding="0" />
+         </mj-column>
+      </mj-section>
+
+      <!-- /* original */
+      <mj-section>
+         <mj-column>
+            <mj-table>
+               <thead class="table-header-row">
+                  <tr>
+                     <th>{% trans "Billing address" context "Order confirmation e-mail billing address" %}</th>
+                     <th>{% trans "Shipping address" context "Order confirmation e-mail shipping address" %}</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr>
+                     <td class="address">
+                        {% if order.billing_address %}
+                        {% format_address order.billing_address %}
+                        {% else %}
+                        {% trans "No billing address" context "Order confirmation e-mail text" %}
+                        {% endif %}
+                     </td>
+                     <td css-class="address">
+                        {% if order.shipping_address %}
+                        {% format_address order.shipping_address %}
+                        {% else %}
+                        {% trans "No shipping required" context "Order confirmation e-mail text" %}
+                        {% endif %}
+                     </td>
+                  </tr>
+               </tbody>
+            </mj-table>
+         </mj-column>
+      </mj-section> -->
+
+      <mj-section padding="0">
+         <mj-column padding="0 16px 0 0">
+            <mj-text font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" font-size="16px" line-height="22px" color="#36332B">
+               <b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 12px; line-height: 14px; color: #36332B; text-transform: uppercase;">Shipping Address</b>
+               <br>
+               <br>
+               {% if order.shipping_address %}
+               {% format_address order.shipping_address %}
+               {% else %}
+               {% trans "No shipping required" context "Order confirmation e-mail text" %}
+               {% endif %}
+               <br>
+               <br>
+            </mj-text>
+         </mj-column>
+         <mj-column padding="0 16px 0 0">
+            <mj-text font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" font-size="16px" line-height="22px" color="#36332B">
+               <b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 12px; line-height: 14px; color: #36332B; text-transform: uppercase;">Shipping Method</b>
+               <br>
+               <br>
+               {% order.shipping_method_name %}
+               <br>
+               <br>
+               <b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 12px; line-height: 14px; color: #36332B; text-transform: uppercase;">Tracking Number</b>
+               <br>
+               {% order.tracking_number %}
+               <br>
+               <a class="footer-link" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;" target="_blank" href="https://www.usps.com/manage/"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;">Track Package</b></a>
+            </mj-text>
+         </mj-column>
+      </mj-section>
+
+      <mj-section padding="0" background-color="#ffffff">
+         <mj-column padding="0">
+            <mj-spacer height="20px" padding="0" />
+         </mj-column>
+      </mj-section>
+
+      <mj-section padding="0">
+         <mj-column padding="0 16px 0 0">
+            <mj-text font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" font-size="16px" line-height="22px" color="#36332B">
+               Tracking may take up to 24 hours to update. You will receive additional confirmation emails if your entire order has not been fulfilled.
+            </mj-text>
+         </mj-column>
+      </mj-section>
+
+
+      <mj-include path="./shared/footer.mjml" />
+   </mj-body>
 </mjml>
