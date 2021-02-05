@@ -19,30 +19,35 @@
          <mj-column padding="0">
             <mj-text align="center" padding="0 10px" font-family="'kaneda-gothic', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" font-size="50px" color="#36332B" text-transform="uppercase">
                <h1 style="font-family: 'kaneda-gothic', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 50px; text-align: center; color: #36332B; text-transform: uppercase;">
-                  <table>
                   {% for key,value in order.private_metadata.items %}
                      {% if key == "ageVerified" %}
-                       {{ value }}
+                        {% if value == "true" %}
+                           Thank You For Your Order
+                        {% else %}
+                           Your Order Is On Hold
+                        {% endif %}
                      {% endif %}
+                  {% empty %}
+                        Your Order Is On Hold
                   {% endfor %}
-                  </table>
-
-                  {% if order.privateMetadata.ageVerification == "Fail" %}
-                  Your Order Is On Hold
-                  {% elif order.privateMetadata.ageVerification == "Pass" %}
-                  Thank You For Your Order
-                  {% endif %}
                </h1>
             </mj-text>
-            <mj-spacer height="40px" padding="0" />
             <mj-text align="center" padding="0 10px" font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" font-size="16px" line-height="24px" color="#36332B">
-               {% if order.privateMetadata.ageVerification == "Fail" %}
-               To stay true to our high standards of responsibility in the cigar industry, we must ask you to verify your age before we can ship your order. If we are unable to verify your age within XX days, your order will be cancelled. If you have any questions, contact us at
-               <br>
-               <a href="tel:809-546-8767" tabIndex="-1" class="" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;" target="_blank"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;">809-546-8767</b></a>.
-               {% elif order.privateMetadata.ageVerification == "Pass" %}
-               We have received your order and are working to get it to you as soon as we can.
-               {% endif %}
+               {% for key,value in order.private_metadata.items %}
+                  {% if key == "ageVerified" %}
+                     {% if value == "true" %}
+                        We have received your order and are working to get it to you as soon as we can.
+                     {% else %}
+                        To stay true to our high standards of responsibility in the cigar industry, we must ask you to verify your age before we can ship your order. If we are unable to verify your age within XX days, your order will be cancelled. If you have any questions, contact us at
+                        <br>
+                        <a href="tel:809-546-8767" tabIndex="-1" class="" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;" target="_blank"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;">809-546-8767</b></a>.
+                     {% endif %}
+                  {% endif %}
+               {% empty %}
+                  To stay true to our high standards of responsibility in the cigar industry, we must ask you to verify your age before we can ship your order. If we are unable to verify your age within XX days, your order will be cancelled. If you have any questions, contact us at
+                  <br>
+                  <a href="tel:809-546-8767" tabIndex="-1" class="" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;" target="_blank"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;">809-546-8767</b></a>.
+               {% endfor %}
             </mj-text>
             <mj-spacer height="36px" padding="0" />
          </mj-column>
@@ -62,23 +67,43 @@
          </mj-column>
       </mj-section>
 
-      {% if order.privateMetadata.ageVerification == "Fail" %}
-      <mj-section padding="0" background-color="#ffffff">
-         <mj-column padding="0">
-            <mj-button width="270px" height="60px" border-radius="0" font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" background-color="#36332B" color="#ffffff" font-size="12px" text-transform="uppercase" href="#">
-               Verify Your Age
-            </mj-button>
-         </mj-column>
-      </mj-section>
-      {% elif order.privateMetadata.ageVerification == "Pass" %}
-      <mj-section padding="0" background-color="#ffffff">
-         <mj-column padding="0">
-            <mj-button width="270px" height="60px" border-radius="0" font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" background-color="#36332B" color="#ffffff" font-size="12px" text-transform="uppercase" href="{{ order_details_url }}">
-               Check Order Status
-            </mj-button>
-         </mj-column>
-      </mj-section>
-      {% endif %}
+      <mj-raw>
+      {% for key,value in order.private_metadata.items %}
+         {% if key == "ageVerified" %}
+            {% if value == "true" %}
+      </mj-raw>
+               <mj-section padding="0" background-color="#ffffff">
+                  <mj-column padding="0">
+                     <mj-button width="270px" height="60px" border-radius="0" font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" background-color="#36332B" color="#ffffff" font-size="12px" text-transform="uppercase" href="{{ order_details_url }}">
+                        Check Order Status
+                     </mj-button>
+                  </mj-column>
+               </mj-section>
+      <mj-raw>
+            {% else %}
+      </mj-raw>
+               <mj-section padding="0" background-color="#ffffff">
+                  <mj-column padding="0">
+                     <mj-button width="270px" height="60px" border-radius="0" font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" background-color="#36332B" color="#ffffff" font-size="12px" text-transform="uppercase" href="#">
+                        Verify Your Age
+                     </mj-button>
+                  </mj-column>
+               </mj-section>
+      <mj-raw>
+            {% endif %}
+         {% endif %}
+      {% empty %}
+      </mj-raw>
+         <mj-section padding="0" background-color="#ffffff">
+            <mj-column padding="0">
+               <mj-button width="270px" height="60px" border-radius="0" font-family="'brandon-grotesque', Helvetica, Arial, sans-serif" font-weight="400" font-style="normal" background-color="#36332B" color="#ffffff" font-size="12px" text-transform="uppercase" href="#">
+                  Verify Your Age
+               </mj-button>
+            </mj-column>
+         </mj-section>
+      <mj-raw>
+      {% endfor %}
+      </mj-raw>
 
       <mj-section padding="0" background-color="#ffffff">
          <mj-column padding="0">
