@@ -255,45 +255,50 @@ class AvataxExcisePlugin(BasePlugin):
 
         return max(total, zero_taxed_money(total.currency))
 
-    # def calculate_checkout_line_total(
-    #     self,
-    #     checkout: "Checkout",
-    #     checkout_line: "CheckoutLine",
-    #     variant: "ProductVariant",
-    #     product: "Product",
-    #     collections: Iterable["Collection"],
-    #     address: Optional["Address"],
-    #     channel: "Channel",
-    #     channel_listing: "ProductVariantChannelListing",
-    #     discounts: Iterable[DiscountInfo],
-    #     previous_value: TaxedMoney,
-    # ) -> TaxedMoney:
-    #     if self._skip_plugin(previous_value):
-    #         return previous_value
+    def calculate_checkout_line_total(
+        self,
+        checkout: "Checkout",
+        checkout_line: "CheckoutLine",
+        variant: "ProductVariant",
+        product: "Product",
+        collections: Iterable["Collection"],
+        address: Optional["Address"],
+        channel: "Channel",
+        channel_listing: "ProductVariantChannelListing",
+        discounts: Iterable[DiscountInfo],
+        previous_value: TaxedMoney,
+    ) -> TaxedMoney:
+        if self._skip_plugin(previous_value):
+            return previous_value
 
-    #     base_total = previous_value
-    #     if not checkout_line.variant.product.charge_taxes:
-    #         return base_total
+        base_total = previous_value
+        if not checkout_line.variant.product.charge_taxes:
+            return base_total
 
-    #     if not _validate_checkout(checkout, [checkout_line]):
-    #         return base_total
+        if not _validate_checkout(checkout, [checkout_line]):
+            logger.debug("Checkout not valid %s")
+            return base_total
 
-    #     taxes_data = get_checkout_tax_data(checkout, discounts, self.config)
-    #     if not taxes_data or "error" in taxes_data:
-    #         return base_total
+        taxes_data = get_checkout_tax_data(checkout, discounts, self.config)
+        print("ZOOT checkout line function firing")
+        if not taxes_data or "Error" in taxes_data["Status"]:
+            logger.debug("Error in tax response %s")
+            return checkout_total
 
-    #     currency = taxes_data.get("currencyCode")
+        currency = taxes_data.get("currencyCode")
 
-    #     for line in taxes_data.get("lines", []):
-    #         if line.get("itemCode") == variant.sku:
-    #             tax = Decimal(line.get("tax", 0.0))
-    #             line_net = Decimal(line["lineAmount"])
-    #             line_gross = Money(amount=line_net + tax, currency=currency)
-    #             line_net = Money(amount=line_net, currency=currency)
-    #             return TaxedMoney(net=line_net, gross=line_gross)
+        for line in taxes_data.get("lines", []):
+            if line.get("itemCode") == variant.sku:
+                tax = Decimal(line.get("tax", 0.0))
+                line_net = Decimal(line["lineAmount"])
+                line_gross = Money(amount=line_net + tax, currency=currency)
+                line_net = Money(amount=line_net, currency=currency)
+                return TaxedMoney(net=line_net, gross=line_gross)
 
-    #     return base_total
+        return base_total
 
+    # this is copied from regular avalara as i was having a problem importing it
+    # should probably figure out why
     def _append_prices_of_not_taxed_lines(
         self,
         price: TaxedMoney,
