@@ -4,9 +4,9 @@ import logging
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from uuid import UUID
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Union
 from urllib.parse import urljoin
+from uuid import UUID
 
 import opentracing
 import opentracing.tags
@@ -67,11 +67,16 @@ def api_post_request(
     response = None
     try:
         auth = HTTPBasicAuth(config.username, config.password)
-        headers = {'x-company-id': config.company_id,
-                   'Content-Type': 'application/json'}
+        headers = {
+            "x-company-id": config.company_id,
+            "Content-Type": "application/json",
+        }
         formatted_data = json.dumps(data, cls=EnhancedJSONEncoder)
         response = requests.post(
-            url + "AvaTaxExcise/transactions/create", headers=headers, auth=auth, data=formatted_data
+            url + "AvaTaxExcise/transactions/create",
+            headers=headers,
+            auth=auth,
+            data=formatted_data,
         )
         # Do we want to set a timeout here?
         logger.debug("Hit to Avatax to calculate taxes %s", url)
