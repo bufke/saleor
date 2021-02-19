@@ -98,7 +98,7 @@
          text-align: right !important;
       }
    }</style>
-        
+        <link rel="stylesheet" href="https://use.typekit.net/cxl2bwq.css">
       </head>
       <body>
         
@@ -618,9 +618,9 @@
             <tr>
               <td align="center" style="font-size: 0px; padding: 0 10px; word-break: break-word;">
                 
-      <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;"><span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order Date</b>: {% order.created %}</span> <span class="mobile-display-none" style="width:20px; height:15px; display: inline-block;">&nbsp;</span>
+      <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;"><span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order Date</b>: {{ order.created | date }}</span> <span class="mobile-display-none" style="width:20px; height:15px; display: inline-block;">&nbsp;</span>
                <br class="mobile-display-block" style="display: none;">
-               <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order No</b>: {% order.number %}</span></div>
+               <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order No</b>: {{ order.number }}</span></div>
     
               </td>
             </tr>
@@ -1675,12 +1675,12 @@
       <div style="font-family:'brandon-grotesque', Helvetica, Arial, sans-serif;font-size:16px;font-style:normal;font-weight:400;line-height:22px;text-align:left;color:#36332B;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 12px; line-height: 14px; color: #36332B; text-transform: uppercase;">Shipping Method</b>
                <br>
                <br>
-               {% order.shipping_method_name %}
+               {{ order.shipping_method_name }}
                <br>
                <br>
                <b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 12px; line-height: 14px; color: #36332B; text-transform: uppercase;">Tracking Number</b>
                <br>
-               {% order.tracking_number %}
+               {{ order.tracking_number }}
                <br>
                <a class="footer-link" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;" target="_blank" href="https://www.usps.com/manage/"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;">Track Package</b></a></div>
     

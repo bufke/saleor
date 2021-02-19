@@ -45,9 +45,9 @@
          <mj-column padding="0">
             <mj-spacer height="36px" padding="0" />
             <mj-text align="center" padding="0 10px">
-               <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order Date</b>: {% order.created %}</span> <span class="mobile-display-none" style="width:20px; height:15px; display: inline-block;">&nbsp;</span>
+               <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order Date</b>: {{ order.created | date }}</span> <span class="mobile-display-none" style="width:20px; height:15px; display: inline-block;">&nbsp;</span>
                <br class="mobile-display-block" style="display: none;">
-               <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order No</b>: {% order.number %}</span>
+               <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order No</b>: {{ order.number }}</span>
             </mj-text>
             <mj-spacer height="40px" padding="0" />
          </mj-column>
@@ -131,12 +131,12 @@
                <b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 12px; line-height: 14px; color: #36332B; text-transform: uppercase;">Shipping Method</b>
                <br>
                <br>
-               {% order.shipping_method_name %}
+               {{ order.shipping_method_name }}
                <br>
                <br>
                <b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 12px; line-height: 14px; color: #36332B; text-transform: uppercase;">Tracking Number</b>
                <br>
-               {% order.tracking_number %}
+               {{ order.tracking_number }}
                <br>
                <a class="footer-link" style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;" target="_blank" href="https://www.usps.com/manage/"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: bold; font-style: normal; font-size: 16px; line-height: 22px; text-align: center; color: #36332B; text-decoration:underline;">Track Package</b></a>
             </mj-text>

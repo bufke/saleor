@@ -98,7 +98,7 @@
          text-align: right !important;
       }
    }</style>
-        
+        <link rel="stylesheet" href="https://use.typekit.net/cxl2bwq.css">
       </head>
       <body>
         
@@ -367,44 +367,18 @@
               <td align="center" style="font-size: 0px; padding: 0 10px; word-break: break-word;">
                 
       <div style="font-family:'kaneda-gothic', Helvetica, Arial, sans-serif;font-size:50px;font-style:normal;font-weight:400;line-height:1;text-align:center;text-transform:uppercase;color:#36332B;"><h1 style="font-family: 'kaneda-gothic', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal; font-size: 50px; text-align: center; color: #36332B; text-transform: uppercase;">
-                  <table>
                   {% for key,value in order.private_metadata.items %}
                      {% if key == "ageVerified" %}
-                       {{ value }}
+                        {% if value == "true" %}
+                           Thank You For Your Order
+                        {% else %}
+                           Your Order Is On Hold
+                        {% endif %}
                      {% endif %}
+                  {% empty %}
+                        Your Order Is On Hold
                   {% endfor %}
-                  </table>
-
-                  {% if order.privateMetadata.ageVerification == "Fail" %}
-                  Your Order Is On Hold
-                  {% elif order.privateMetadata.ageVerification == "Pass" %}
-                  Thank You For Your Order
-                  {% endif %}
                </h1></div>
-    
-              </td>
-            </tr>
-          
-            <tr>
-              <td style="font-size: 0px; padding: 0; word-break: break-word;">
-                
-      
-    <!--[if mso | IE]>
-    
-        <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td height="40" style="vertical-align:top;height:40px;">
-      
-    <![endif]-->
-  
-      <div style="height:40px;">
-        &nbsp;
-      </div>
-      
-    <!--[if mso | IE]>
-    
-        </td></tr></table>
-      
-    <![endif]-->
-  
     
               </td>
             </tr>
@@ -412,13 +386,21 @@
             <tr>
               <td align="center" style="font-size: 0px; padding: 0 10px; word-break: break-word;">
                 
-      <div style="font-family:'brandon-grotesque', Helvetica, Arial, sans-serif;font-size:16px;font-style:normal;font-weight:400;line-height:24px;text-align:center;color:#36332B;">{% if order.privateMetadata.ageVerification == "Fail" %}
-               To stay true to our high standards of responsibility in the cigar industry, we must ask you to verify your age before we can ship your order. If we are unable to verify your age within XX days, your order will be cancelled. If you have any questions, contact us at
-               <br>
-               <a href="tel:809-546-8767" tabindex="-1" class style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;" target="_blank"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;">809-546-8767</b></a>.
-               {% elif order.privateMetadata.ageVerification == "Pass" %}
-               We have received your order and are working to get it to you as soon as we can.
-               {% endif %}</div>
+      <div style="font-family:'brandon-grotesque', Helvetica, Arial, sans-serif;font-size:16px;font-style:normal;font-weight:400;line-height:24px;text-align:center;color:#36332B;">{% for key,value in order.private_metadata.items %}
+                  {% if key == "ageVerified" %}
+                     {% if value == "true" %}
+                        We have received your order and are working to get it to you as soon as we can.
+                     {% else %}
+                        To stay true to our high standards of responsibility in the cigar industry, we must ask you to verify your age before we can ship your order. If we are unable to verify your age within XX days, your order will be cancelled. If you have any questions, contact us at
+                        <br>
+                        <a href="tel:809-546-8767" tabindex="-1" class style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;" target="_blank"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;">809-546-8767</b></a>.
+                     {% endif %}
+                  {% endif %}
+               {% empty %}
+                  To stay true to our high standards of responsibility in the cigar industry, we must ask you to verify your age before we can ship your order. If we are unable to verify your age within XX days, your order will be cancelled. If you have any questions, contact us at
+                  <br>
+                  <a href="tel:809-546-8767" tabindex="-1" class style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;" target="_blank"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal; font-size: 16px; line-height: 24px; text-align: center; color: #36332B; text-decoration:underline; cursor: default;">809-546-8767</b></a>.
+               {% endfor %}</div>
     
               </td>
             </tr>
@@ -620,7 +602,7 @@
             <tr>
               <td align="center" style="font-size: 0px; padding: 0 10px; word-break: break-word;">
                 
-      <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;"><span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order Date</b>: {{ order.created }}</span> <span class="mobile-display-none" style="width:20px; height:15px; display: inline-block;">&nbsp;</span>
+      <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:center;color:#000000;"><span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order Date</b>: {{ order.created | date }}</span> <span class="mobile-display-none" style="width:20px; height:15px; display: inline-block;">&nbsp;</span>
                <br class="mobile-display-block" style="display: none;">
                <span style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 400; font-style: normal;"><b style="font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif; font-weight: 700; font-style: normal;">Order No</b>: {{ order.pk }}</span></div>
     
@@ -679,85 +661,13 @@
           </td>
         </tr>
       </table>
-      
-      <table
-         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
-      >
-        <tr>
-          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
       <![endif]-->
     
-      
-      <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
-        
-        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
-          <tbody>
-            <tr>
-              <td style="direction: ltr; font-size: 0px; padding: 0; text-align: center;" align="center">
-                <!--[if mso | IE]>
-                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                
-        <tr>
-      
-            <td
-               class="" style="vertical-align:top;width:600px;"
-            >
-          <![endif]-->
-            
-      <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-        
-      <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
-        <tbody>
-          <tr>
-            <td style="vertical-align: top; padding: 0;" valign="top">
-              
-      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style width="100%">
-        
-            <tr>
-              <td align="center" vertical-align="middle" style="font-size: 0px; padding: 10px 25px; word-break: break-word;">
-                
-      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;width:270px;line-height:100%;">
-        <tr>
-          <td align="center" bgcolor="#36332B" role="presentation" style="padding: 5px; border: none; border-radius: 0; cursor: auto; font-style: normal; height: 60px; mso-padding-alt: 10px 25px; background: #36332B;" valign="middle" height="60">
-            <a href="#" style="display:inline-block;width:220px;background:#36332B;color:#ffffff;font-family:'brandon-grotesque', Helvetica, Arial, sans-serif;font-size:12px;font-style:normal;font-weight:400;line-height:120%;margin:0;text-decoration:none;text-transform:uppercase;padding:10px 25px;mso-padding-alt:0px;border-radius:0;" target="_blank">
-              Verify Your Age
-            </a>
-          </td>
-        </tr>
-      </table>
-    
-              </td>
-            </tr>
-          
-      </table>
-    
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    
-      </div>
-    
-          <!--[if mso | IE]>
-            </td>
-          
-        </tr>
-      
-                  </table>
-                <![endif]-->
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        
-      </div>
-    
+    {% for key,value in order.private_metadata.items %}
+         {% if key == "ageVerified" %}
+            {% if value == "true" %}
       
       <!--[if mso | IE]>
-          </td>
-        </tr>
-      </table>
-      
       <table
          align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
       >
@@ -835,7 +745,177 @@
           </td>
         </tr>
       </table>
+      <![endif]-->
+    
+    {% else %}
       
+      <!--[if mso | IE]>
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+    
+      
+      <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
+        
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
+          <tbody>
+            <tr>
+              <td style="direction: ltr; font-size: 0px; padding: 0; text-align: center;" align="center">
+                <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                
+        <tr>
+      
+            <td
+               class="" style="vertical-align:top;width:600px;"
+            >
+          <![endif]-->
+            
+      <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+        
+      <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top; padding: 0;" valign="top">
+              
+      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style width="100%">
+        
+            <tr>
+              <td align="center" vertical-align="middle" style="font-size: 0px; padding: 10px 25px; word-break: break-word;">
+                
+      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;width:270px;line-height:100%;">
+        <tr>
+          <td align="center" bgcolor="#36332B" role="presentation" style="padding: 5px; border: none; border-radius: 0; cursor: auto; font-style: normal; height: 60px; mso-padding-alt: 10px 25px; background: #36332B;" valign="middle" height="60">
+            <a href="#" style="display:inline-block;width:220px;background:#36332B;color:#ffffff;font-family:'brandon-grotesque', Helvetica, Arial, sans-serif;font-size:12px;font-style:normal;font-weight:400;line-height:120%;margin:0;text-decoration:none;text-transform:uppercase;padding:10px 25px;mso-padding-alt:0px;border-radius:0;" target="_blank">
+              Verify Your Age
+            </a>
+          </td>
+        </tr>
+      </table>
+    
+              </td>
+            </tr>
+          
+      </table>
+    
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
+      </div>
+    
+          <!--[if mso | IE]>
+            </td>
+          
+        </tr>
+      
+                  </table>
+                <![endif]-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+    
+      
+      <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+      <![endif]-->
+    
+    {% endif %}
+         {% endif %}
+      {% empty %}
+      
+      <!--[if mso | IE]>
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+    
+      
+      <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
+        
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
+          <tbody>
+            <tr>
+              <td style="direction: ltr; font-size: 0px; padding: 0; text-align: center;" align="center">
+                <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                
+        <tr>
+      
+            <td
+               class="" style="vertical-align:top;width:600px;"
+            >
+          <![endif]-->
+            
+      <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+        
+      <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top; padding: 0;" valign="top">
+              
+      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style width="100%">
+        
+            <tr>
+              <td align="center" vertical-align="middle" style="font-size: 0px; padding: 10px 25px; word-break: break-word;">
+                
+      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;width:270px;line-height:100%;">
+        <tr>
+          <td align="center" bgcolor="#36332B" role="presentation" style="padding: 5px; border: none; border-radius: 0; cursor: auto; font-style: normal; height: 60px; mso-padding-alt: 10px 25px; background: #36332B;" valign="middle" height="60">
+            <a href="#" style="display:inline-block;width:220px;background:#36332B;color:#ffffff;font-family:'brandon-grotesque', Helvetica, Arial, sans-serif;font-size:12px;font-style:normal;font-weight:400;line-height:120%;margin:0;text-decoration:none;text-transform:uppercase;padding:10px 25px;mso-padding-alt:0px;border-radius:0;" target="_blank">
+              Verify Your Age
+            </a>
+          </td>
+        </tr>
+      </table>
+    
+              </td>
+            </tr>
+          
+      </table>
+    
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
+      </div>
+    
+          <!--[if mso | IE]>
+            </td>
+          
+        </tr>
+      
+                  </table>
+                <![endif]-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+    
+      
+      <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+      <![endif]-->
+    
+    {% endfor %}
+      
+      <!--[if mso | IE]>
       <table
          align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
       >
